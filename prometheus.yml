@@ -1,0 +1,53 @@
+# ==========================
+# CONFIGURACIÓN GLOBAL
+# ==========================
+
+global:
+  scrape_interval: 15s        # Intervalo entre recolecciones de métricas (por defecto 1m)
+  evaluation_interval: 15s    # Cada cuánto se evalúan las reglas de alerta
+  # scrape_timeout: 10s       # Tiempo máximo para obtener métricas (opcional)
+
+# ==========================
+# CONFIGURACIÓN DE ALERTMANAGER
+# ==========================
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093   # Descomenta esta línea si tienes Alertmanager activo
+
+# ==========================
+# ARCHIVOS DE REGLAS (Opcional)
+# ==========================
+rule_files:
+  # - "rules.yml"    # Puedes definir tus reglas de alerta aquí más adelante
+
+# ==========================
+# SCRAPE CONFIGS (FUENTES DE MÉTRICAS)
+# ==========================
+scrape_configs:
+
+  # 🔹 Monitorear Prometheus a sí mismo
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          app: "prometheus"
+
+  # 🔹 Monitorear el servidor con tu script Python
+  - job_name: "servidor_web"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["184.168.28.51:8000"]   # Puerto donde tu script expone las métricas
+        labels:
+          app: "monitor_servidor"
+          entorno: "produccion"
+
+  # 🔹 (Opcional) Agrega más servidores aquí si deseas escalar el monitoreo
+  # - job_name: "otro_servidor"
+  #   metrics_path: "/metrics"
+  #   static_configs:
+  #     - targets: ["192.168.1.20:8000"]
+  #       labels:
+  #         app: "monitor_backup"
+  #         entorno: "pruebas"
